@@ -20,6 +20,8 @@ android/key.properties
 # Données volumineuses générées (scraping, exports) — ne pas pousser
 data/*.json
 data/*.zip
+data/med_images_sample/
 logs_*.zip
 .log_analysis/
 scripts/__pycache__/
+sketches/
