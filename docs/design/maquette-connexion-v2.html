@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion PharmaScan v2 — question secrète</title>
+<style>
+  :root{
+    --bg:#F8FAF9; --card:#FFFFFF; --ink:#1A2E28; --muted:#5C6F66;
+    --primary:#0E7A5F; --primary-soft:#E4F3EE;
+    --border:#E4EBE7; --radius:5px;
+    --shadow:0 1px 3px rgba(11,31,25,.06), 0 1px 2px rgba(11,31,25,.04);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:Inter, system-ui, sans-serif;
+    display:flex; justify-content:center; gap:28px; flex-wrap:wrap;
+    padding:24px 16px 40px; min-height:100vh;
+  }
+  .phone{width:370px; max-width:100%; padding:0 16px;}
+
+  .logo-wrap{display:flex; justify-content:center; margin:40px 0 30px;}
+  .logo{width:72px; height:72px; border-radius:17px; background:linear-gradient(160deg,#19B178,#0E7A5F);
+    display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 4px 14px rgba(14,122,95,.28);}
+  .logo svg{width:36px; height:36px; stroke:currentColor;}
+
+  h1{font-family:Poppins, system-ui, sans-serif; font-size:19px; font-weight:600; text-align:center;}
+  .sub{font-size:13px; color:var(--muted); text-align:center; margin-top:6px; line-height:1.5;}
+  .sub b{color:var(--ink);}
+
+  .phonefield{display:flex; gap:8px; margin-top:26px;}
+  .prefix{display:flex; align-items:center; padding:0 12px; background:var(--card);
+    border:1px solid var(--border); border-radius:var(--radius); font-size:14px; font-weight:600;}
+  .phonefield input{flex:1; padding:12px 14px; font-size:15px; border:1px solid var(--border);
+    border-radius:var(--radius); background:var(--card); color:var(--ink); outline:none;}
+  .phonefield input:focus{border-color:var(--primary);}
+  .phonefield input:disabled{background:#F1F4F2; color:var(--muted);}
+
+  /* Dropdown custom */
+  .select{width:100%; margin-top:12px; padding:12px 14px; font-size:14px;
+    border:1px solid var(--border); border-radius:var(--radius); background:var(--card);
+    color:var(--ink); outline:none; appearance:none; cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C6F66' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center;}
+  .select:focus{border-color:var(--primary);}
+  .select.placeholder{color:var(--muted);}
+
+  .input{width:100%; margin-top:12px; padding:12px 14px; font-size:14px;
+    border:1px solid var(--border); border-radius:var(--radius); background:var(--card);
+    color:var(--ink); outline:none;}
+  .input:focus{border-color:var(--primary);}
+
+  .btn{width:100%; padding:13px; margin-top:14px; background:var(--primary); color:#fff;
+    border:none; border-radius:var(--radius); font-size:14.5px; font-weight:600; cursor:pointer;
+    font-family:Inter, system-ui, sans-serif;}
+  .btn.ghost{background:transparent; color:var(--muted); font-weight:400; margin-top:8px;
+    font-size:12.5px; padding:6px; text-decoration:underline; text-underline-offset:3px;}
+
+  .hint{font-size:11.5px; color:var(--muted); text-align:center; margin-top:14px; line-height:1.5;}
+
+  .qcard{background:var(--primary-soft); border:1px solid var(--primary);
+    border-radius:var(--radius); padding:12px 14px; margin-top:26px;}
+  .qcard .qlabel{font-size:11px; color:var(--primary); font-weight:600; text-transform:uppercase; letter-spacing:.4px;}
+  .qcard .qtext{font-size:14.5px; font-weight:600; color:var(--ink); margin-top:5px; line-height:1.45;}
+
+  .note{background:#FFF7E8; border-radius:var(--radius); padding:10px 12px;
+    font-size:11.5px; color:#8A6D3B; margin-top:20px; line-height:1.55;}
+</style>
+</head>
+<body>
+
+<!-- ÉCRAN 1 : numéro -->
+<div class="phone">
+  <div class="logo-wrap">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.5 20.5H3.5a1 1 0 0 1-1-1V6.7a1 1 0 0 1 .5-.86l8-4a1 1 0 0 1 1 0l8 4a1 1 0 0 1 .5.86v12.8a1 1 0 0 1-1 1h-7"/>
+        <path d="M14 20.5h6M12.5 7v3M9.5 10v3"/>
+      </svg>
+    </div>
+  </div>
+  <h1>Bienvenue sur PharmaScan</h1>
+  <div class="sub">Comparez. Payez juste.</div>
+  <div class="phonefield">
+    <div class="prefix">+225</div>
+    <input type="tel" placeholder="07 00 00 00 00" inputmode="numeric" maxlength="10">
+  </div>
+  <button class="btn">Continuer</button>
+  <button class="btn ghost">Plus tard (essayer sans compte)</button>
+  <div class="hint">Ton numéro est ton identifiant. Ta question secrète protège ton compte si tu changes de téléphone.</div>
+</div>
+
+<!-- ÉCRAN 2 : vérification (reconnexion) -->
+<div class="phone">
+  <div class="logo-wrap">
+    <div class="logo" style="width:56px;height:56px;border-radius:14px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    </div>
+  </div>
+  <h1>Vérification</h1>
+  <div class="sub">Compte trouvé pour le numéro <b>+225 07 45 21 89 63</b></div>
+
+  <div class="qcard">
+    <div class="qlabel">Ta question secrète</div>
+    <div class="qtext">Quel est le prénom de ta mère ?</div>
+  </div>
+
+  <input class="input" type="text" placeholder="Ta réponse">
+  <button class="btn">Vérifier</button>
+  <button class="btn ghost">Plus tard (essayer sans compte)</button>
+
+  <div class="note">
+    Si tu ne reconnais pas cette question, quelqu'un a peut-être déjà
+    récupéré ce numéro. Continue « Plus tard » et contacte le support.
+  </div>
+</div>
+
+<!-- ÉCRAN 3 : inscription (dropdown) -->
+<div class="phone">
+  <div class="logo-wrap">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.5 20.5H3.5a1 1 0 0 1-1-1V6.7a1 1 0 0 1 .5-.86l8-4a1 1 0 0 1 1 0l8 4a1 1 0 0 1 .5.86v12.8a1 1 0 0 1-1 1h-7"/>
+        <path d="M14 20.5h6M12.5 7v3M9.5 10v3"/>
+      </svg>
+    </div>
+  </div>
+  <h1>Crée ton compte</h1>
+  <div class="sub">Choisis une question secrète pour protéger ton compte.</div>
+
+  <div class="phonefield">
+    <div class="prefix">+225</div>
+    <input type="tel" value="07 45 21 89 63" disabled>
+  </div>
+
+  <select class="select placeholder">
+    <option value="" disabled selected>Question secrète</option>
+    <option>Quel est le nom de ta première école ?</option>
+    <option>Quel est le prénom de ta mère ?</option>
+    <option>Quelle est ta ville de naissance ?</option>
+    <option>Quel est ton plat préféré ?</option>
+    <option>Comment s'appelait ton premier animal ?</option>
+  </select>
+
+  <input class="input" type="text" placeholder="Réponse mémorable (3 caractères min)">
+  <button class="btn">Créer mon compte</button>
+  <button class="btn ghost">Plus tard (essayer sans compte)</button>
+
+  <div class="hint">Ta réponse est chiffrée — personne ne peut la lire, même pas nous.</div>
+</div>
+
+</body>
+</html>

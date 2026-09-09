@@ -304,9 +304,17 @@ class _LoginPageState extends State<LoginPage> {
                       _LoginStep.registering => 'Créer mon compte',
                     }),
             ),
+            // « Plus tard » : volontairement DISCRET (lien texte léger) —
+            // le bouton principal (création de compte) reste dominant.
             TextButton(
               onPressed: () => context.pop(),
-              style: TextButton.styleFrom(foregroundColor: AppColors.textMuted),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textMuted,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                textStyle: Theme.of(context).textTheme.bodySmall,
+              ),
               child: const Text('Plus tard (essayer sans compte)'),
             ),
             const SizedBox(height: 10),
