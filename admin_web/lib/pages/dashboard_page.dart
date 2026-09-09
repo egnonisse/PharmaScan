@@ -13,6 +13,7 @@ import 'notifications_page.dart';
 import 'pharmacies_page.dart';
 import 'points_page.dart';
 import 'receipts_page.dart';
+import 'security_questions_page.dart';
 import 'users_page.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -43,6 +44,7 @@ class _DashboardPageState extends State<DashboardPage> {
       const MedicamentsPage(),
       const UsersPage(),
       const PointsPage(),
+      const SecurityQuestionsPage(),
       const AnalyticsPage(),
       const AiSettingsPage(),
       const CampaignsPage(),
@@ -97,6 +99,10 @@ class _DashboardPageState extends State<DashboardPage> {
               NavigationRailDestination(
                 icon: Icon(Icons.stars),
                 label: Text('Points'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.lock_outline),
+                label: Text('Questions secrètes'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.insights),

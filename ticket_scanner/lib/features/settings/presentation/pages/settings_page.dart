@@ -166,6 +166,21 @@ class _AccountSection extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right, size: 20),
                 onTap: () => context.push('/profile'),
               ),
+              if (phone.isNotEmpty)
+                ListTile(
+                  leading: Icon(Icons.logout,
+                      color: Theme.of(context).colorScheme.error),
+                  title: const Text('Se déconnecter'),
+                  subtitle: const Text(
+                      'Tu pourras te reconnecter avec ton numéro et ta '
+                      'question secrète'),
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    // Retour au splash : relance le cycle (nouveau compte
+                    // anonyme) puis l'écran de connexion.
+                    if (context.mounted) context.go('/');
+                  },
+                ),
             ],
           ),
         );

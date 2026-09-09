@@ -598,6 +598,13 @@ function normalizePhone(value) {
  * Lie (ou met à jour) le numéro du compte courant. Refuse si le numéro
  * est déjà utilisé par un AUTRE compte.
  */
+/** Hash de la réponse secrète (sel = numéro, jamais en clair). */
+function hashSecretAnswer(phone, answer) {
+  return crypto.createHash('sha256')
+    .update(phone + '|' + answer.trim().toLowerCase())
+    .digest('hex');
+}
+
 exports.linkPhone = onCall(async (request) => {
   try {
     const uid = request.auth?.uid;
@@ -606,6 +613,18 @@ exports.linkPhone = onCall(async (request) => {
     if (!phone) {
       throw new HttpsError('invalid-argument', 'Numéro invalide (ex : 07 07 07 07 07).');
     }
+    const questionId = String(request.data?.securityQuestionId || '').trim();
+    const answer = String(request.data?.securityAnswer || '').trim();
+    if (!questionId || answer.length < 3) {
+      throw new HttpsError('invalid-argument', 'Question secrète et réponse requises.');
+    }
+
+    // La question doit être active.
+    const questionDoc = await db.collection('securityQuestions').doc(questionId).get();
+    if (!questionDoc.exists || questionDoc.data().active !== true) {
+      throw new HttpsError('invalid-argument', 'Question invalide.');
+    }
+    const questionText = questionDoc.data().text;
 
     const existing = await db.collection('users')
       .where('phone', '==', phone)
@@ -616,7 +635,13 @@ exports.linkPhone = onCall(async (request) => {
     }
 
     await db.collection('users').doc(uid).set(
-      { phone, updatedAt: FieldValue.serverTimestamp() },
+      {
+        phone,
+        securityQuestionId: questionId,
+        securityQuestionText: questionText,
+        securityAnswerHash: hashSecretAnswer(phone, answer),
+        updatedAt: FieldValue.serverTimestamp(),
+      },
       { merge: true },
     );
     return { success: true, phone };
@@ -627,11 +652,6 @@ exports.linkPhone = onCall(async (request) => {
   }
 });
 
-/**
- * Reconnexion par numéro : récupère le compte lié au numéro et le migre
- * vers l'appareil courant (points, parrainage, profil). L'ancien doc est
- * supprimé après migration des champs scalaires.
- */
 exports.loginByPhone = onCall(async (request) => {
   try {
     const uid = request.auth?.uid;
@@ -648,15 +668,33 @@ exports.loginByPhone = onCall(async (request) => {
     if (match.empty) {
       throw new HttpsError('not-found', 'Aucun compte avec ce numéro.');
     }
-    const oldRef = match.docs[0].ref;
     if (match.docs[0].id === uid) {
       return { success: true, alreadyLinked: true };
     }
 
     const oldData = match.docs[0].data();
+    const answer = String(request.data?.answer || '').trim();
+
+    // Compte protégé par une question secrète : vérification obligatoire.
+    if (oldData.securityAnswerHash) {
+      if (!answer) {
+        // Phase 1 : renvoyer la question à afficher.
+        return {
+          needsSecret: true,
+          question: oldData.securityQuestionText || 'Question secrète',
+        };
+      }
+      if (hashSecretAnswer(phone, answer) !== oldData.securityAnswerHash) {
+        throw new HttpsError('failed-precondition',
+          'Réponse incorrecte. Réessaie.');
+      }
+    }
+
+    // Migration des champs scalaires vers l'appareil courant.
     const migrateFields = ['points', 'contributions', 'referralCode',
       'referredBy', 'referredByName', 'referralActivated', 'currencyCode',
-      'firstName', 'lastName', 'birthDate', 'gender', 'profileCompleted'];
+      'firstName', 'lastName', 'birthDate', 'gender', 'profileCompleted',
+      'securityQuestionId', 'securityQuestionText', 'securityAnswerHash'];
     const payload = {};
     for (const field of migrateFields) {
       if (oldData[field] !== undefined) payload[field] = oldData[field];
@@ -666,7 +704,7 @@ exports.loginByPhone = onCall(async (request) => {
 
     await db.runTransaction(async (tx) => {
       tx.set(db.collection('users').doc(uid), payload, { merge: true });
-      tx.delete(oldRef);
+      tx.delete(match.docs[0].ref);
     });
 
     return { success: true, migrated: true, points: payload.points ?? 0 };
@@ -677,10 +715,6 @@ exports.loginByPhone = onCall(async (request) => {
   }
 });
 
-/**
- * Complète le profil (optionnel). Au PREMIER remplissage : bonus de
- * points (pointsConfig.profileBonus, fallback 50).
- */
 exports.completeProfile = onCall(async (request) => {
   try {
     const uid = request.auth?.uid;
