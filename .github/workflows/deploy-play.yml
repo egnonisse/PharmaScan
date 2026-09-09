@@ -72,6 +72,9 @@ jobs:
       - name: Build & Upload (${{ github.event.inputs.track || 'internal' }})
         env:
           FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
+          # Upload des debug symbols vers Sentry à chaque build release
+          # (crashs lisibles en clair). Token : secret GitHub.
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           if [ "${{ github.event.inputs.track }}" = "production" ] || [ "${{ github.ref_type }}" = "tag" ]; then
             bundle exec fastlane android deploy_production
