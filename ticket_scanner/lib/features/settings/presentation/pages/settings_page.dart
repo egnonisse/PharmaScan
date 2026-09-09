@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -68,6 +69,9 @@ class SettingsPage extends StatelessWidget {
               // Parrainage : code perso + saisie d'un code (points bonus).
               const _ReferralSection(),
               const SizedBox(height: 20),
+              // Compte : numéro lié + profil (optionnel, bonus points).
+              const _AccountSection(),
+              const SizedBox(height: 20),
               // Partager l'app avec l'entourage (bouche-à-oreille).
               Card(
                 child: ListTile(
@@ -114,6 +118,58 @@ class SettingsPage extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// Section Compte : numéro lié (connexion simple) + profil optionnel.
+class _AccountSection extends StatelessWidget {
+  const _AccountSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const SizedBox.shrink();
+    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: userRef.snapshots(),
+      builder: (context, snapshot) {
+        final data = snapshot.data?.data() as Map<String, dynamic>? ?? {};
+        final phone = (data['phone'] as String?) ?? '';
+        final firstName = (data['firstName'] as String?) ?? '';
+        final completed = data['profileCompleted'] == true;
+
+        return Card(
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.person, color: AppColors.primary),
+                title: Text(phone.isEmpty
+                    ? 'Lier mon numéro'
+                    : (firstName.isNotEmpty ? 'Compte de $firstName' : 'Mon compte')),
+                subtitle: Text(phone.isEmpty
+                    ? 'Retrouve tes points et ton parrainage si tu changes '
+                        'de téléphone'
+                    : phone),
+                trailing: const Icon(Icons.chevron_right, size: 20),
+                onTap: () => context.push('/login'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.badge_outlined,
+                    color: AppColors.primary),
+                title: const Text('Mon profil'),
+                subtitle: Text(completed
+                    ? 'Complété — merci !'
+                    : 'Optionnel : prénom, date de naissance, genre '
+                        '(bonus points)'),
+                trailing: const Icon(Icons.chevron_right, size: 20),
+                onTap: () => context.push('/profile'),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

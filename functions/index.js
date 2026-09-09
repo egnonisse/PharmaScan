@@ -572,3 +572,158 @@ exports.activateReferral = onCall(async (request) => {
     throw new HttpsError('internal', 'Erreur inattendue.');
   }
 });
+
+/**
+ * Connexion par NUMÉRO (sans SMS — décision produit MVP : le numéro seul
+ * donne accès, l'OTP viendra quand les points auront de la valeur).
+ */
+
+/** Normalise un numéro CI : +225 07 07 07 07 07 → +2250707070707. */
+function normalizePhone(value) {
+  let digits = String(value || '').replace(/\D/g, '');
+  if (digits.startsWith('225') && digits.length >= 11) {
+    digits = digits.slice(3);
+  }
+  if (digits.length === 8) {
+    // Numéros fixes sans indicatif régional → préfixe 27 (Abidjan).
+    digits = '27' + digits;
+  }
+  if (digits.length === 10 && /^(0[1-9]|2[0-9]|4[0-9]|5[0-9]|7[0-9])/.test(digits)) {
+    return '+225' + digits;
+  }
+  return '';
+}
+
+/**
+ * Lie (ou met à jour) le numéro du compte courant. Refuse si le numéro
+ * est déjà utilisé par un AUTRE compte.
+ */
+exports.linkPhone = onCall(async (request) => {
+  try {
+    const uid = request.auth?.uid;
+    if (!uid) throw new HttpsError('unauthenticated', 'Connexion requise.');
+    const phone = normalizePhone(request.data?.phone);
+    if (!phone) {
+      throw new HttpsError('invalid-argument', 'Numéro invalide (ex : 07 07 07 07 07).');
+    }
+
+    const existing = await db.collection('users')
+      .where('phone', '==', phone)
+      .limit(1)
+      .get();
+    if (!existing.empty && existing.docs[0].id !== uid) {
+      throw new HttpsError('already-exists', 'Ce numéro est déjà utilisé.');
+    }
+
+    await db.collection('users').doc(uid).set(
+      { phone, updatedAt: FieldValue.serverTimestamp() },
+      { merge: true },
+    );
+    return { success: true, phone };
+  } catch (error) {
+    if (error instanceof HttpsError) throw error;
+    logger.error('linkPhone failed', error);
+    throw new HttpsError('internal', 'Erreur inattendue.');
+  }
+});
+
+/**
+ * Reconnexion par numéro : récupère le compte lié au numéro et le migre
+ * vers l'appareil courant (points, parrainage, profil). L'ancien doc est
+ * supprimé après migration des champs scalaires.
+ */
+exports.loginByPhone = onCall(async (request) => {
+  try {
+    const uid = request.auth?.uid;
+    if (!uid) throw new HttpsError('unauthenticated', 'Connexion requise.');
+    const phone = normalizePhone(request.data?.phone);
+    if (!phone) {
+      throw new HttpsError('invalid-argument', 'Numéro invalide.');
+    }
+
+    const match = await db.collection('users')
+      .where('phone', '==', phone)
+      .limit(1)
+      .get();
+    if (match.empty) {
+      throw new HttpsError('not-found', 'Aucun compte avec ce numéro.');
+    }
+    const oldRef = match.docs[0].ref;
+    if (match.docs[0].id === uid) {
+      return { success: true, alreadyLinked: true };
+    }
+
+    const oldData = match.docs[0].data();
+    const migrateFields = ['points', 'contributions', 'referralCode',
+      'referredBy', 'referredByName', 'referralActivated', 'currencyCode',
+      'firstName', 'lastName', 'birthDate', 'gender', 'profileCompleted'];
+    const payload = {};
+    for (const field of migrateFields) {
+      if (oldData[field] !== undefined) payload[field] = oldData[field];
+    }
+    payload.phone = phone;
+    payload.migratedAt = FieldValue.serverTimestamp();
+
+    await db.runTransaction(async (tx) => {
+      tx.set(db.collection('users').doc(uid), payload, { merge: true });
+      tx.delete(oldRef);
+    });
+
+    return { success: true, migrated: true, points: payload.points ?? 0 };
+  } catch (error) {
+    if (error instanceof HttpsError) throw error;
+    logger.error('loginByPhone failed', error);
+    throw new HttpsError('internal', 'Erreur inattendue.');
+  }
+});
+
+/**
+ * Complète le profil (optionnel). Au PREMIER remplissage : bonus de
+ * points (pointsConfig.profileBonus, fallback 50).
+ */
+exports.completeProfile = onCall(async (request) => {
+  try {
+    const uid = request.auth?.uid;
+    if (!uid) throw new HttpsError('unauthenticated', 'Connexion requise.');
+
+    const firstName = String(request.data?.firstName || '').trim().slice(0, 60);
+    const lastName = String(request.data?.lastName || '').trim().slice(0, 60);
+    const birthDate = String(request.data?.birthDate || '').slice(0, 10);
+    const gender = ['homme', 'femme', 'autre', ''].includes(request.data?.gender)
+      ? request.data.gender : '';
+
+    const meRef = db.collection('users').doc(uid);
+    const meDoc = await meRef.get();
+    const alreadyCompleted = meDoc.exists && meDoc.data().profileCompleted === true;
+
+    let bonus = 0;
+    if (!alreadyCompleted) {
+      const config = await db.collection('pointsConfig').doc('default').get();
+      const value = Number(config.data()?.profileBonus);
+      bonus = Number.isFinite(value) && value > 0 ? Math.round(value) : 50;
+    }
+
+    const payload = {
+      firstName: firstName || null,
+      lastName: lastName || null,
+      birthDate: birthDate || null,
+      gender: gender || null,
+      profileCompleted: true,
+    };
+    if (!alreadyCompleted) payload.points = FieldValue.increment(bonus);
+
+    await meRef.set(payload, { merge: true });
+    if (bonus > 0) {
+      await meRef.collection('pointsEvents').add({
+        pointsAdded: bonus,
+        reason: 'Profil complété',
+        createdAt: FieldValue.serverTimestamp(),
+      });
+    }
+    return { success: true, bonus };
+  } catch (error) {
+    if (error instanceof HttpsError) throw error;
+    logger.error('completeProfile failed', error);
+    throw new HttpsError('internal', 'Erreur inattendue.');
+  }
+});

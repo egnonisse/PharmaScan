@@ -18,7 +18,9 @@ class SplashPage extends StatelessWidget {
         listenWhen: (previous, current) =>
             previous.status != current.status &&
             current.status == AppInitStatus.ready,
-        listener: (context, state) => context.go('/home'),
+        listener: (context, state) => context.go(
+          state.hasPhone ? '/home' : '/login',
+        ),
         child: Scaffold(
           body: Stack(
             fit: StackFit.expand,

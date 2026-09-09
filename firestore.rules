@@ -79,13 +79,13 @@ service cloud.firestore {
 
       allow create: if request.auth != null
           && request.auth.uid == userId
-          && request.resource.data.keys().hasOnly(['points', 'currencyCode', 'createdAt', 'referralCode', 'referredByName'])
+          && request.resource.data.keys().hasOnly(['points', 'currencyCode', 'createdAt', 'referralCode', 'referredByName', 'phone', 'firstName', 'lastName', 'birthDate', 'gender', 'profileCompleted'])
           && request.resource.data.points == 0
           && request.resource.data.currencyCode is string;
 
       allow update: if request.auth != null
           && (request.auth.uid == userId
-              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['currencyCode', 'fcmToken', 'referralCode'])
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['currencyCode', 'fcmToken', 'referralCode', 'firstName', 'lastName', 'birthDate', 'gender', 'profileCompleted'])
               || isAdmin());
 
       allow delete: if false;

@@ -20,6 +20,8 @@ class AppInitCubit extends Cubit<AppInitState> {
 
   final SettingsCubit _settingsCubit;
 
+  bool _hasPhone = false;
+
   /// Code de parrainage (généré une fois, même alphabet sans ambiguïtés).
   String _newReferralCode() {
     const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -75,10 +77,12 @@ class AppInitCubit extends Cubit<AppInitState> {
               'createdAt': FieldValue.serverTimestamp(),
               'referralCode': _newReferralCode(),
             });
+            _hasPhone = false;
             return;
           }
 
           final data = snapshot.data() ?? <String, dynamic>{};
+          _hasPhone = (data['phone'] as String? ?? '').isNotEmpty;
           if (!data.containsKey('currencyCode')) {
             tx.update(userRef,
                 {'currencyCode': _settingsCubit.state.currencyCode});
@@ -112,7 +116,7 @@ class AppInitCubit extends Cubit<AppInitState> {
         repository: const FirebaseReceiptRepository(),
       ).flush());
 
-      emit(state.copyWith(status: AppInitStatus.ready));
+      emit(state.copyWith(status: AppInitStatus.ready, hasPhone: _hasPhone));
     } on FirebaseAuthException catch (e) {
       final hint = switch (e.code) {
         'admin-restricted-operation' ||
