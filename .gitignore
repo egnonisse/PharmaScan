@@ -16,3 +16,10 @@ android/key.properties
 
 # Résidus de session Hermes (temporaires)
 .hermes-tmp.*
+
+# Données volumineuses générées (scraping, exports) — ne pas pousser
+data/*.json
+data/*.zip
+logs_*.zip
+.log_analysis/
+scripts/__pycache__/
