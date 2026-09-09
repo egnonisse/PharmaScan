@@ -146,6 +146,16 @@ class _CampaignsPageState extends State<CampaignsPage> {
                       initialUrl: imageUrl,
                       onChanged: (url) => imageUrl = url,
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Recommandé : ratio 8:3, 1200×450 px, WebP/JPEG '
+                      '< 200 Ko. Zone de sécurité : 5% de marge de chaque '
+                      'côté (aperçu des slides voisins). Jamais de remise '
+                      'sur médicaments (interdiction réglementaire).',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
