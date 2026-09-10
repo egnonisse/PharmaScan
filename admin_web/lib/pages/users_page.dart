@@ -210,6 +210,23 @@ class _UserTile extends StatelessWidget {
                     label: 'Inscrit',
                     value: createdAt.toDate().toLocal().toString().substring(0, 10),
                   ),
+                if (profileCompleted) ...[
+                  if ((data['gender'] as String?)?.isNotEmpty == true)
+                    _InfoRow(
+                      label: 'Genre',
+                      value: switch (data['gender']) {
+                        'homme' => 'Homme',
+                        'femme' => 'Femme',
+                        'autre' => 'Autre / ne pas dire',
+                        _ => '${data['gender']}',
+                      },
+                    ),
+                  if ((data['birthDate'] as String?)?.isNotEmpty == true)
+                    _InfoRow(
+                      label: 'Naissance',
+                      value: data['birthDate'] as String,
+                    ),
+                ],
                 if (referralCode.isNotEmpty)
                   _InfoRow(label: 'Code parrain', value: referralCode),
                 if (referredByName.isNotEmpty)
