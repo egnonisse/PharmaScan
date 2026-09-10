@@ -157,19 +157,29 @@ def semaine_dates(semaine_str: str, annee: int):
 # --- Récupération du PDF depuis le site ---
 
 def get_article_downloads(annee: int, mois: int) -> list[str]:
-    """Trouve les liens downloads.php du mois en explorant la liste des articles."""
+    """Trouve les liens downloads.php du mois en explorant la liste des articles.
+
+    L'UNPPCI publie par SEMAINE : chaque article = une semaine de garde.
+    On accumule TOUS les articles récents du mois + année (pas seulement
+    le premier — sinon on ne couvre que la 1re semaine).
+    """
     html = _fetch(f'{BASE}/index.php/pharmacies-de-garde')
     # Les articles récents sont listés avec ?p=articles&id=XXX
     # On scanne les IDs d'articles autour des plus récents (300 et moins)
     # et on cherche ceux dont le contenu contient le mois recherché.
     month_label = MOIS_INDEX[mois]
     results = []
-    for aid in range(300, 290, -1):  # les ~11 derniers articles
-        page = _fetch(f'{BASE}/?p=articles&id={aid}')
+    # L'UNPPCI publie par SEMAINE : chaque article = une semaine de garde.
+    # On accumule TOUS les articles du mois (pas seulement le premier).
+    for aid in range(310, 285, -1):  # les ~25 derniers articles
+        try:
+            page = _fetch(f'{BASE}/?p=articles&id={aid}')
+        except Exception:
+            continue
         if month_label in page.upper() and str(annee) in page:
             for dl in re.findall(r'downloads\.php\?id=(\d+)', page):
-                results.append(dl)
-            return results
+                if dl not in results:
+                    results.append(dl)
         time.sleep(0.3)
     return results
 
