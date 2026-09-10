@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
             return;
           }
           _snack('Bienvenue ! Ton compte est restauré.');
-          if (mounted) context.pop();
+          if (mounted) context.go('/home');
           return;
         } catch (e) {
           if (!e.toString().contains('not-found')) rethrow;
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
             .httpsCallable('loginByPhone')
             .call({'phone': phone, 'answer': _answerController.text});
         _snack('Bienvenue ! Ton compte est restauré.');
-        if (mounted) context.pop();
+        if (mounted) context.go('/home');
         return;
       }
 
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
         'securityAnswer': _answerController.text,
       });
       _snack('Compte créé. Ton code de parrainage est dans les Réglages.');
-      if (mounted) context.pop();
+      if (mounted) context.go('/home');
     } catch (e) {
       final text = e.toString();
       final message = text.contains('failed-precondition')
@@ -307,7 +307,7 @@ class _LoginPageState extends State<LoginPage> {
             // « Plus tard » : volontairement DISCRET (lien texte léger) —
             // le bouton principal (création de compte) reste dominant.
             TextButton(
-              onPressed: () => context.pop(),
+              onPressed: () => context.go('/home'),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.textMuted,
                 padding: const EdgeInsets.symmetric(vertical: 4),
