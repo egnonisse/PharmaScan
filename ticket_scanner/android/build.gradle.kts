@@ -21,13 +21,18 @@ subprojects {
 
 // Fix : certains plugins (sentry_flutter) compilent avec une version de
 // langage Kotlin obsolète (1.6) refusée par Kotlin 2.x. On force une
-// version moderne pour TOUTES les tâches Kotlin des sous-projets.
+// version moderne pour TOUTES les tâches Kotlin des sous-projets, et on
+// aligne Java sur 17 (sinon : « Inconsistent JVM Target Compatibility »).
 subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         compilerOptions {
             languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
+    }
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
     }
 }
 
