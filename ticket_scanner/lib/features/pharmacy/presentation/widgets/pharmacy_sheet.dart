@@ -67,9 +67,12 @@ class _PharmacySheet extends StatelessWidget {
           '${pharmacy.address != null ? '+${Uri.encodeComponent(pharmacy.address!)}' : ''}'),
     ];
     for (final uri in candidates) {
+      final isLast = uri == candidates.last;
       try {
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
+        if (isLast || await canLaunchUrl(uri)) {
+          // externalApplication : ouvre TOUJOURS l'app externe (jamais
+          // de WebView interne — plus fiable pour la navigation).
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
           return;
         }
       } catch (_) {
