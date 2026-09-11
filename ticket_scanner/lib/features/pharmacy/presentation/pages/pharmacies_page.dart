@@ -130,10 +130,29 @@ class _PharmaciesPageState extends State<PharmaciesPage> {
         ),
         if (state.userLat == null)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Position GPS non disponible — pharmacies triées par nom.',
-              style: Theme.of(context).textTheme.bodySmall,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    state.gpsMessage ??
+                        'Position GPS non disponible — pharmacies triées par nom.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                if (state.gpsBlocked)
+                  TextButton(
+                    onPressed: () => Geolocator.openAppSettings(),
+                    child: const Text('Ouvrir réglages'),
+                  )
+                else
+                  TextButton(
+                    onPressed: () => context
+                        .read<PharmaciesCubit>()
+                        .refreshPosition(),
+                    child: const Text('Réessayer'),
+                  ),
+              ],
             ),
           ),
         Expanded(
