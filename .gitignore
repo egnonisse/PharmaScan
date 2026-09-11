@@ -25,3 +25,6 @@ logs_*.zip
 .log_analysis/
 scripts/__pycache__/
 sketches/
+
+# Secrets locaux (tokens API, clés) — JAMAIS dans le repo
+.env

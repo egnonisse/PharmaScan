@@ -33,10 +33,18 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _load() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get();
+    DocumentSnapshot<Map<String, dynamic>>? doc;
+    try {
+      doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+    } catch (_) {
+      // Hors ligne : on garde le formulaire vide (pas de crash).
+      if (!mounted) return;
+      setState(() => _loading = false);
+      return;
+    }
     final data = doc.data() ?? <String, dynamic>{};
     if (!mounted) return;
     setState(() {

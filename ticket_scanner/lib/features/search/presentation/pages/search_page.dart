@@ -385,10 +385,20 @@ class _MedicationTile extends StatelessWidget {
 
 /// Ouvre la fiche pharmacie (récupère le doc par id, puis bottom sheet).
 Future<void> _openPharmacySheet(BuildContext context, String pharmacyId) async {
-  final doc = await FirebaseFirestore.instance
-      .collection('pharmacies')
-      .doc(pharmacyId)
-      .get();
+  DocumentSnapshot<Map<String, dynamic>>? doc;
+  try {
+    doc = await FirebaseFirestore.instance
+        .collection('pharmacies')
+        .doc(pharmacyId)
+        .get();
+  } catch (_) {
+    // Hors ligne : message propre au lieu du crash.
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Pharmacie indisponible hors ligne — réessaie avec '
+            'une connexion.')));
+    return;
+  }
   if (!doc.exists || !context.mounted) return;
   final data = doc.data() ?? <String, dynamic>{};
   final pharmacy = Pharmacy(

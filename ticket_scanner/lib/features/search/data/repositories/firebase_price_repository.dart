@@ -8,11 +8,17 @@ class FirebasePriceRepository implements PriceRepository {
 
   /// Filtres de visibilité chargés depuis contentConfig/default.
   Future<_ContentFilters> _loadFilters() async {
-    final doc = await FirebaseFirestore.instance
-        .collection('contentConfig')
-        .doc('default')
-        .get();
-    final data = doc.data() ?? <String, dynamic>{};
+    Map<String, dynamic> data;
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('contentConfig')
+          .doc('default')
+          .get();
+      data = doc.data() ?? <String, dynamic>{};
+    } catch (_) {
+      // Hors ligne : aucun filtre (tout reste visible) — pas de crash.
+      data = <String, dynamic>{};
+    }
     return _ContentFilters(
       hiddenMedications: (data['hiddenMedications'] as List?)
               ?.map((e) => e.toString())
