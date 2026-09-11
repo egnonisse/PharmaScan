@@ -50,8 +50,27 @@ class _PharmacySheet extends StatelessWidget {
     }
   }
 
+  /// Nettoie la commune pour la recherche Maps : coupe aux repères
+  /// (« FACE », « APRES », « ROUTE », « / »...) qui rendent la requête
+  /// inexploitable — Google trouve la pharmacie par son NOM.
+  static String _cleanCommune(String commune) {
+    var c = commune;
+    for (final token in [
+      'FACE', 'APRES', 'PRES ', 'CARREFOUR', 'ROUTE', 'AVENUE',
+      'BOULEVARD', 'RUE ', 'TEL', 'ENTRE', 'DERRIERE', '/',
+    ]) {
+      final i = c.toUpperCase().indexOf(token);
+      if (i > 0) c = c.substring(0, i).trim();
+    }
+    if (c.length > 30) c = c.substring(0, 30).trim();
+    return c;
+  }
+
   Future<void> _navigate(BuildContext context) async {
     final name = Uri.encodeComponent(pharmacy.name);
+    final commune = pharmacy.commune != null
+        ? _cleanCommune(pharmacy.commune!)
+        : null;
     final candidates = <Uri>[
       // 1. Google Maps en navigation directe (si coordonnées)
       if (pharmacy.lat != null && pharmacy.lng != null)
@@ -61,10 +80,11 @@ class _PharmacySheet extends StatelessWidget {
       if (pharmacy.lat != null && pharmacy.lng != null)
         Uri.parse(
             'geo:0,0?q=${pharmacy.lat},${pharmacy.lng}($name)'),
-      // 3. Fallback web : recherche Google Maps par nom + commune + adresse
+      // 3. Fallback web : NOM + commune nettoyée uniquement (jamais
+      //    l'adresse brute pleine de repères — Google trouve la
+      //    pharmacie par son nom dans Google Maps/Business).
       Uri.parse('https://www.google.com/maps/search/?api=1&query=$name'
-          '${pharmacy.commune != null ? '+${Uri.encodeComponent(pharmacy.commune!)}' : ''}'
-          '${pharmacy.address != null ? '+${Uri.encodeComponent(pharmacy.address!)}' : ''}'),
+          '${commune != null && commune.isNotEmpty ? '+${Uri.encodeComponent(commune)}' : ''}'),
     ];
     for (final uri in candidates) {
       final isLast = uri == candidates.last;

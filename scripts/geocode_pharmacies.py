@@ -30,12 +30,25 @@ def geocode(query: str) -> dict | None:
     return {'lat': float(d['lat']), 'lon': float(d['lon']), 'display': d.get('display_name', '')}
 
 
+def clean_commune(commune: str | None) -> str:
+    """Coupe aux repères d'adresse (« FACE », « APRES », « / »...) hérités
+    du parsing PDF — ils polluent la requête Nominatim."""
+    if not commune:
+        return ''
+    c = commune
+    for token in ('FACE', 'APRES', 'PRES ', 'CARREFOUR', 'ROUTE', 'AVENUE',
+                  'BOULEVARD', 'RUE ', 'TEL', 'ENTRE', 'DERRIERE', '/'):
+        i = c.upper().find(token)
+        if i > 0:
+            c = c[:i].strip()
+    return c[:30].strip() if len(c) > 30 else c.strip()
+
+
 def queries_for(name: str, commune: str | None, address: str | None):
-    """Cascade de requêtes : adresse complète → pharmacie+commune → commune seule."""
+    """Cascade de requêtes : pharmacie+commune → pharmacie seule →
+    commune seule. La commune est nettoyée de ses repères."""
     qs = []
-    if address and len(address) > 5 and any(c.isdigit() is False for c in address):
-        # l'adresse contient des repères ('face boulangerie BBCO') — peu utile seule
-        pass
+    commune = clean_commune(commune)
     if name and commune:
         qs.append(f'Pharmacie {name}, {commune}, Abidjan, Côte d\'Ivoire')
     if name:
