@@ -50,6 +50,39 @@ class _PharmacySheet extends StatelessWidget {
     }
   }
 
+  Future<void> _navigate(BuildContext context) async {
+    final name = Uri.encodeComponent(pharmacy.name);
+    final candidates = <Uri>[
+      // 1. Google Maps en navigation directe (si coordonnées)
+      if (pharmacy.lat != null && pharmacy.lng != null)
+        Uri.parse(
+            'google.nav:geo:${pharmacy.lat},${pharmacy.lng}?q=$name'),
+      // 2. Sélecteur d'app de navigation (Maps, Waze, ...)
+      if (pharmacy.lat != null && pharmacy.lng != null)
+        Uri.parse(
+            'geo:0,0?q=${pharmacy.lat},${pharmacy.lng}($name)'),
+      // 3. Fallback web : recherche Google Maps par nom + commune + adresse
+      Uri.parse('https://www.google.com/maps/search/?api=1&query=$name'
+          '${pharmacy.commune != null ? '+${Uri.encodeComponent(pharmacy.commune!)}' : ''}'
+          '${pharmacy.address != null ? '+${Uri.encodeComponent(pharmacy.address!)}' : ''}'),
+    ];
+    for (final uri in candidates) {
+      try {
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+          return;
+        }
+      } catch (_) {
+        // continue vers le fallback suivant
+      }
+    }
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Impossible d\'ouvrir la navigation.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final phones = [
@@ -122,6 +155,15 @@ class _PharmacySheet extends StatelessWidget {
                   ),
                 ),
             ],
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => _navigate(context),
+                icon: const Icon(Icons.directions_rounded),
+                label: const Text('Itinéraire'),
+              ),
+            ),
           ],
         ),
       ),
