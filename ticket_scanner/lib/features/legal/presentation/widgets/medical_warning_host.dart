@@ -48,7 +48,7 @@ class _MedicalWarningHostState extends State<MedicalWarningHost> {
             ),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: const Icon(Icons.health_and_safety, color: Colors.white, size: 28),
+          child: const Icon(Icons.health_and_safety_rounded, color: Colors.white, size: 28),
         ),
         title: const Text(
           'Avertissement médical',

@@ -92,9 +92,9 @@ class _AnnouncementDialog extends StatelessWidget {
   final Announcement announcement;
 
   static const _typeIcons = {
-    'promo': Icons.local_offer,
-    'rappel': Icons.alarm,
-    'info': Icons.info,
+    'promo': Icons.local_offer_rounded,
+    'rappel': Icons.alarm_rounded,
+    'info': Icons.info_rounded,
   };
 
   static const _typeColors = {
@@ -130,7 +130,7 @@ class _AnnouncementDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = _typeIcons[announcement.type] ?? Icons.info;
+    final icon = _typeIcons[announcement.type] ?? Icons.info_rounded;
     final color = _typeColors[announcement.type] ?? const Color(0xFF0E7A5F);
 
     return AlertDialog(

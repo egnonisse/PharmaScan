@@ -117,9 +117,9 @@ class _NotificationTile extends StatelessWidget {
   final VoidCallback onTap;
 
   IconData get _icon => switch (data['type']) {
-        'promo' => Icons.local_offer,
-        'rappel' => Icons.alarm,
-        _ => Icons.info,
+        'promo' => Icons.local_offer_rounded,
+        'rappel' => Icons.alarm_rounded,
+        _ => Icons.info_rounded,
       };
 
   @override

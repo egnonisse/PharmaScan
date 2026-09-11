@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.local_pharmacy,
+                child: const Icon(Icons.local_pharmacy_rounded,
                     color: Colors.white, size: 38),
               ),
             ),

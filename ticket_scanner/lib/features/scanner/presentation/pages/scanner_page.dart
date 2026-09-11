@@ -93,7 +93,7 @@ class ScannerPage extends StatelessWidget {
                     onPressed: state.isLoading
                         ? null
                         : () => _requestPermissionAndScan(context),
-                    icon: const Icon(Icons.photo_camera),
+                    icon: const Icon(Icons.photo_camera_rounded),
                     label: Text(
                       state.isLoading ? 'Traitement en cours…' : 'Prendre une photo',
                     ),
@@ -103,7 +103,7 @@ class ScannerPage extends StatelessWidget {
                     onPressed: state.isLoading
                         ? null
                         : () => context.read<ScannerCubit>().scanFromGallery(),
-                    icon: const Icon(Icons.photo_library),
+                    icon: const Icon(Icons.photo_library_rounded),
                     label: const Text('Choisir depuis la galerie'),
                   ),
                   if (state.errorMessage != null) ...[
@@ -135,7 +135,7 @@ class ScannerPage extends StatelessWidget {
                               );
                             }
                           : null,
-                      icon: const Icon(Icons.check),
+                      icon: const Icon(Icons.check_rounded),
                       label: const Text('Continuer'),
                     ),
                   ],

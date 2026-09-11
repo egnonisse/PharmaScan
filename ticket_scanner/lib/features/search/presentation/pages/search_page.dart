@@ -67,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: const Text('Recherche'),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.close_rounded),
           onPressed: () => context.pop(),
         ),
       ),
@@ -132,7 +132,7 @@ class _SearchPageState extends State<SearchPage> {
                   labelText: 'Nom du médicament',
                   hintText: 'Ex : paracétamol, amoxicilline…',
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.search),
+                    icon: const Icon(Icons.search_rounded),
                     onPressed: () => searchContext
                         .read<SearchCubit>()
                         .search(_controller.text),
@@ -283,7 +283,7 @@ List<Widget> _buildPriceGroups(
     for (final name in sortedNames)
       Card(
         child: ExpansionTile(
-          leading: const Icon(Icons.medication),
+          leading: const Icon(Icons.medication_rounded),
           title: InkWell(
             onTap: () => context.push(
               '/medication?name=${Uri.encodeComponent(name)}'
@@ -302,7 +302,7 @@ List<Widget> _buildPriceGroups(
             for (final entry in groups[name]!)
               ListTile(
                 dense: true,
-                leading: const Icon(Icons.local_pharmacy_outlined),
+                leading: const Icon(Icons.local_pharmacy_rounded),
                 title: Text(
                   entry.pharmacyName ?? entry.pharmacyId,
                   overflow: TextOverflow.ellipsis,
@@ -331,7 +331,7 @@ class _MedicationTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: const Icon(Icons.medication),
+        leading: const Icon(Icons.medication_rounded),
         onTap: () => context.push(
           '/medication?name=${Uri.encodeComponent(medication.name)}'
           '&title=${Uri.encodeComponent(medication.name)}',
@@ -373,7 +373,7 @@ class _MedicationTile extends StatelessWidget {
         ),
         trailing: IconButton(
           tooltip: 'Scanner un ticket',
-          icon: const Icon(Icons.qr_code_scanner),
+          icon: const Icon(Icons.qr_code_scanner_rounded),
           color: Theme.of(context).colorScheme.primary,
           onPressed: () => context.push('/scanner'),
         ),
@@ -426,13 +426,13 @@ class _TabBar extends StatelessWidget {
         children: [
           _TabItem(
             label: 'Pharmacies',
-            icon: Icons.local_pharmacy,
+            icon: Icons.local_pharmacy_rounded,
             active: index == 0,
             onTap: () => onChanged(0),
           ),
           _TabItem(
             label: 'Médicaments',
-            icon: Icons.medication,
+            icon: Icons.medication_rounded,
             active: index == 1,
             onTap: () => onChanged(1),
           ),

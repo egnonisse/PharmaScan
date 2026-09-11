@@ -62,13 +62,13 @@ class HomePage extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () => context.push('/scanner'),
-              icon: const Icon(Icons.qr_code_scanner),
+              icon: const Icon(Icons.qr_code_scanner_rounded),
               tooltip: 'Scanner un ticket',
             ),
             const NotificationBell(),
             IconButton(
               onPressed: () => context.push('/settings'),
-              icon: const Icon(Icons.settings),
+              icon: const Icon(Icons.settings_rounded),
               tooltip: 'Réglages',
             ),
           ],
@@ -156,7 +156,7 @@ class _SearchBar extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.search, color: AppColors.primary, size: 20),
+              const Icon(Icons.search_rounded, color: AppColors.primary, size: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
@@ -283,8 +283,8 @@ class _ContributorHeader extends StatelessWidget {
   }
 
   static IconData _tierIcon(ContributorTier tier) => switch (tier) {
-        ContributorTier.bronze => Icons.workspace_premium,
-        ContributorTier.silver => Icons.military_tech,
+        ContributorTier.bronze => Icons.workspace_premium_rounded,
+        ContributorTier.silver => Icons.military_tech_rounded,
         ContributorTier.gold => Icons.emoji_events,
       };
 
@@ -359,7 +359,7 @@ class _OnDutySection extends StatelessWidget {
                             borderRadius: BorderRadius.circular(AppRadii.icon),
                           ),
                           child: const Icon(
-                            Icons.local_pharmacy,
+                            Icons.local_pharmacy_rounded,
                             color: AppColors.primary,
                             size: 20,
                           ),
@@ -472,7 +472,7 @@ class _ChipsRow extends StatelessWidget {
       children: [
         for (final med in meds)
           ActionChip(
-            avatar: const Icon(Icons.medication,
+            avatar: const Icon(Icons.medication_rounded,
                 size: 18, color: AppColors.primary),
             label: Text(med),
             labelStyle: Theme.of(context).textTheme.labelMedium,
@@ -521,7 +521,7 @@ class _PointsEventTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadii.icon),
           ),
           child: const Icon(
-            Icons.receipt_long,
+            Icons.receipt_long_rounded,
             color: AppColors.primary,
             size: 18,
           ),

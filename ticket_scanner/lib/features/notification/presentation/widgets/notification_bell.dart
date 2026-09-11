@@ -47,7 +47,7 @@ class NotificationBell extends StatelessWidget {
                 isLabelVisible: unread > 0,
                 label: Text('$unread'),
                 backgroundColor: AppColors.secondary,
-                child: const Icon(Icons.notifications),
+                child: const Icon(Icons.notifications_rounded),
               ),
             );
           },

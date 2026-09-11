@@ -112,7 +112,7 @@ class _PharmaciesPageState extends State<PharmaciesPage> {
                   Expanded(
                     child: FilterChip(
                       avatar: Icon(
-                        Icons.near_me,
+                        Icons.near_me_rounded,
                         size: 16,
                         color: _showNearbyOnly
                             ? Theme.of(context).colorScheme.primary
@@ -199,7 +199,7 @@ class _PharmacyTile extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: Icon(
-          isOnDuty ? Icons.local_pharmacy : Icons.storefront,
+          isOnDuty ? Icons.local_pharmacy_rounded : Icons.storefront_rounded,
           color: isOnDuty ? Theme.of(context).colorScheme.primary : null,
         ),
         title: Row(

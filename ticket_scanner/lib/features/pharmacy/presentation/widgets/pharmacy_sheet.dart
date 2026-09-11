@@ -69,7 +69,7 @@ class _PharmacySheet extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.local_pharmacy, size: 28),
+                const Icon(Icons.local_pharmacy_rounded, size: 28),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -113,11 +113,11 @@ class _PharmacySheet extends StatelessWidget {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.phone),
+                  leading: const Icon(Icons.phone_rounded),
                   title: Text(phone),
                   trailing: FilledButton.tonalIcon(
                     onPressed: () => _call(context, phone),
-                    icon: const Icon(Icons.call, size: 18),
+                    icon: const Icon(Icons.call_rounded, size: 18),
                     label: const Text('Appeler'),
                   ),
                 ),

@@ -75,7 +75,7 @@ class SettingsPage extends StatelessWidget {
               // Partager l'app avec l'entourage (bouche-à-oreille).
               Card(
                 child: ListTile(
-                  leading: const Icon(Icons.share),
+                  leading: const Icon(Icons.share_rounded),
                   title: const Text('Partager PharmaScan'),
                   subtitle: const Text(
                     'Invite ton entourage à comparer les prix des '
@@ -144,7 +144,7 @@ class _AccountSection extends StatelessWidget {
           child: Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.person, color: AppColors.primary),
+                leading: const Icon(Icons.person_rounded, color: AppColors.primary),
                 title: Text(phone.isEmpty
                     ? 'Lier mon numéro'
                     : (firstName.isNotEmpty ? 'Compte de $firstName' : 'Mon compte')),
@@ -152,7 +152,7 @@ class _AccountSection extends StatelessWidget {
                     ? 'Retrouve tes points et ton parrainage si tu changes '
                         'de téléphone'
                     : phone),
-                trailing: const Icon(Icons.chevron_right, size: 20),
+                trailing: const Icon(Icons.chevron_right_rounded, size: 20),
                 onTap: () => context.push('/login'),
               ),
               ListTile(
@@ -163,12 +163,12 @@ class _AccountSection extends StatelessWidget {
                     ? 'Complété — merci !'
                     : 'Optionnel : prénom, date de naissance, genre '
                         '(bonus points)'),
-                trailing: const Icon(Icons.chevron_right, size: 20),
+                trailing: const Icon(Icons.chevron_right_rounded, size: 20),
                 onTap: () => context.push('/profile'),
               ),
               if (phone.isNotEmpty)
                 ListTile(
-                  leading: Icon(Icons.logout,
+                  leading: Icon(Icons.logout_rounded,
                       color: Theme.of(context).colorScheme.error),
                   title: const Text('Se déconnecter'),
                   subtitle: const Text(
@@ -309,7 +309,7 @@ class _ReferralSectionState extends State<_ReferralSection> {
                     const SizedBox(width: 8),
                     IconButton(
                       tooltip: 'Partager mon code',
-                      icon: const Icon(Icons.share, color: AppColors.primary),
+                      icon: const Icon(Icons.share_rounded, color: AppColors.primary),
                       onPressed: code.isEmpty
                           ? null
                           : () => SharePlus.instance.share(

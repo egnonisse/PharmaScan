@@ -114,33 +114,33 @@ class LegalSection extends StatelessWidget {
           child: Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.privacy_tip),
+                leading: const Icon(Icons.privacy_tip_rounded),
                 title: const Text('Politique de confidentialité'),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => context.push('/legal/privacy'),
               ),
               ListTile(
-                leading: const Icon(Icons.fact_check),
+                leading: const Icon(Icons.fact_check_rounded),
                 title: const Text('Consentement scan reçus'),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => context.push('/legal/consent'),
               ),
               ListTile(
-                leading: const Icon(Icons.health_and_safety),
+                leading: const Icon(Icons.health_and_safety_rounded),
                 title: const Text('Avertissement médical / urgence'),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => context.push('/legal/medical'),
               ),
               ListTile(
                 leading: const Icon(Icons.description),
                 title: const Text('Conditions d\'utilisation'),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => context.push('/legal/terms'),
               ),
               ListTile(
-                leading: const Icon(Icons.gavel),
+                leading: const Icon(Icons.gavel_rounded),
                 title: const Text('Mentions légales + contact'),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => context.push('/legal/legal'),
               ),
             ],

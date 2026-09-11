@@ -70,7 +70,7 @@ class _MedicationDetailPageState extends State<MedicationDetailPage> {
           appBar: AppBar(
             title: const Text('Fiche médicament'),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () => context.pop(),
             ),
           ),
@@ -192,7 +192,7 @@ class _MedicationDetailPageState extends State<MedicationDetailPage> {
                 children: [
                   Expanded(
                     child: _ActionButton(
-                      icon: Icons.qr_code_scanner,
+                      icon: Icons.qr_code_scanner_rounded,
                       label: 'Scanner un prix',
                       primary: true,
                       onTap: () => context.push('/scanner'),
@@ -201,7 +201,7 @@ class _MedicationDetailPageState extends State<MedicationDetailPage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _ActionButton(
-                      icon: Icons.share,
+                      icon: Icons.share_rounded,
                       label: 'Partager',
                       onTap: _share,
                     ),

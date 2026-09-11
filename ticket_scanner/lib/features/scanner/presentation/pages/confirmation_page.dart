@@ -274,7 +274,7 @@ class _ConfirmationForm extends StatelessWidget {
               ),
               TextButton.icon(
                 onPressed: onAddItem,
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.add_rounded),
                 label: const Text('Ajouter'),
               ),
             ],
@@ -321,7 +321,7 @@ class _ConfirmationForm extends StatelessWidget {
                             imagePath: imagePath,
                           );
                     },
-                    icon: const Icon(Icons.check),
+                    icon: const Icon(Icons.check_rounded),
                     label: const Text('Valider le reçu'),
                   ),
                   if (state.errorMessage != null) ...[
@@ -490,7 +490,7 @@ class _PharmacyPickerSheetState extends State<_PharmacyPickerSheet> {
               autofocus: true,
               decoration: const InputDecoration(
                 labelText: 'Rechercher une pharmacie',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: Icon(Icons.search_rounded),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) =>
@@ -508,7 +508,7 @@ class _PharmacyPickerSheetState extends State<_PharmacyPickerSheet> {
                       final name = _filtered[index];
                       return ListTile(
                         dense: true,
-                        leading: const Icon(Icons.local_pharmacy, size: 20),
+                        leading: const Icon(Icons.local_pharmacy_rounded, size: 20),
                         title: Text(name),
                         onTap: () => widget.onSelected(name),
                       );
