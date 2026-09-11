@@ -140,6 +140,8 @@ def parse_gardes(pdf_path: Path) -> list[dict]:
 
 def semaine_dates(semaine_str: str, annee: int):
     """Convertit 'SAMEDI 01 AU VENDREDI 07 AOUT 2026' en (debut, fin) dates ISO."""
+    if not semaine_str:
+        return None, None
     m = re.search(r'SAMEDI\s+(\d{1,2})', semaine_str, re.I)
     if not m:
         return None, None
@@ -209,6 +211,8 @@ def to_firestore_records(gardes: list[dict]) -> list[dict]:
         if debut:
             d = date.fromisoformat(debut)
             dates = [(d + timedelta(days=i)).isoformat() for i in range(7)]
+        if not dates:
+            continue  # garde résiduelle sans semaine identifiable (PDF partiel)
         out.append({
             'nom': g['pharmacie'],
             'quartier': g['quartier'] or '',
